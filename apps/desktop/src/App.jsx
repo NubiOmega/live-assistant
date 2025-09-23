@@ -1,6 +1,13 @@
 import { useMemo, useState } from 'react';
 
+import ProductsPanel from './Products.jsx';
+
 const menuItems = [
+  {
+    key: 'dashboard',
+    label: 'Dashboard',
+    description: 'Pantau performa live commerce secara menyeluruh.'
+  },
   {
     key: 'chat',
     label: 'Chat',
@@ -43,6 +50,21 @@ export default function App() {
     [activeKey]
   );
 
+  const renderPanelContent = () => {
+    switch (activeKey) {
+      case 'produk':
+        return <ProductsPanel />;
+      default:
+        return (
+          <div className="panel__placeholder">
+            <p>Konten {activeItem.label} akan tampil di sini.</p>
+          </div>
+        );
+    }
+  };
+
+  const showSummaryCards = activeKey === 'dashboard';
+
   return (
     <div className="app-shell">
       <aside className="sidebar">
@@ -65,28 +87,29 @@ export default function App() {
 
       <main className="dashboard">
         <header className="dashboard__header">
-          <h1>Dashboard</h1>
-          <p>Pusat kontrol untuk live commerce Anda.</p>
+          <h1>{activeItem.label}</h1>
+          <p>{activeItem.description}</p>
         </header>
 
-        <section className="dashboard__cards">
-          {summaryCards.map((card) => (
-            <article key={card.title} className="card">
-              <h3>{card.title}</h3>
-              <p className="card__value">{card.value}</p>
-              <span className="card__hint">{card.hint}</span>
-            </article>
-          ))}
-        </section>
+        {showSummaryCards && (
+          <section className="dashboard__cards">
+            {summaryCards.map((card) => (
+              <article key={card.title} className="card">
+                <h3>{card.title}</h3>
+                <p className="card__value">{card.value}</p>
+                <span className="card__hint">{card.hint}</span>
+              </article>
+            ))}
+          </section>
+        )}
 
         <section className="dashboard__panel">
-          <h2>{activeItem.label}</h2>
-          <p>{activeItem.description}</p>
-          <div className="panel__placeholder">
-            <p>Konten {activeItem.label} akan tampil di sini.</p>
-          </div>
+          {activeKey !== 'produk' && <h2>{activeItem.label}</h2>}
+          {activeKey !== 'produk' && <p>{activeItem.description}</p>}
+          {renderPanelContent()}
         </section>
       </main>
     </div>
   );
 }
+

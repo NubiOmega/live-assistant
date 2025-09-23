@@ -1,6 +1,7 @@
 from http import HTTPStatus
 
 from fastapi import Depends, FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from . import auth, db
@@ -14,6 +15,14 @@ from .schemas import (
 )
 
 app = FastAPI(title=settings.app_name)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(products.router, prefix="/products", tags=["products"])
 
@@ -56,3 +65,4 @@ async def login_user(
 
     token = auth.create_access_token(payload.username)
     return TokenResponse(access_token=token)
+
