@@ -29,6 +29,23 @@ services/
 - **Docker & Docker Compose** (untuk orkestrasi lokal)
 - **Git**
 
+## Bootstrap Lingkungan Dev (Windows)
+Gunakan skrip `scripts/run-dev.ps1` untuk menyiapkan seluruh dependency dan menjalankan service pengembangan di jendela PowerShell terpisah.
+
+```powershell
+# dari akar repository
+./scripts/run-dev.ps1             # menjalankan setup lengkap
+./scripts/run-dev.ps1 -StartDocker # otomatis menyalakan PostgreSQL & Redis via docker compose
+./scripts/run-dev.ps1 -SkipInstalls # lewati npm/pip install setelah dependensi sudah terpasang
+./scripts/run-dev.ps1 -SkipDesktop  # tidak membuka aplikasi desktop
+```
+
+Skrip akan:
+- Membuat virtualenv Python (`services/api/.venv`) jika belum ada dan memasang dependency (termasuk `pydantic-settings`).
+- Menjalankan `npm install` untuk gateway, overlay, dan desktop (kecuali `-SkipDesktop`).
+- Menjalankan migrasi database dengan `alembic upgrade head`.
+- Membuka jendela PowerShell baru untuk masing-masing service (API, gateway, overlay, dan desktop).
+
 ## Quick Start dengan Docker Compose
 Menjalankan seluruh infrastruktur inti (PostgreSQL, Redis, API, Gateway) dengan satu perintah.
 
@@ -43,7 +60,7 @@ Layanan yang tersedia setelah container aktif:
 - PostgreSQL: `localhost:5432` (db/user/password: `live_assistant`)
 - Gateway WebSocket & HTTP: `ws://localhost:3000` / `http://localhost:3000`
 
-> **Catatan:** Overlay React dan aplikasi desktop tidak dijalankan lewat Docker Compose. Jalankan secara manual sesuai panduan di bawah.
+> **Catatan:** Overlay React dan aplikasi desktop tidak dijalankan lewat Docker Compose. Jalankan secara manual sesuai panduan di bawah atau gunakan skrip bootstrap.
 
 ## Setup Manual per Komponen
 ### 1. Backend API (FastAPI)
@@ -84,13 +101,13 @@ Endpoint penting:
 ```bash
 cd apps/overlay
 npm install
-npm run dev -- --host 0.0.0.0 --port 3000
+npm run dev -- --host 0.0.0.0 --port 5174
 ```
-Perintah di atas menjalankan overlay pada `http://localhost:3000`. Jika port tersebut digunakan gateway, hentikan gateway sementara atau pilih port lain dan sesuaikan URL di OBS.
+Perintah di atas menjalankan overlay pada `http://localhost:5174`. Sesuaikan port melalui argumen `--port` bila diperlukan dan update URL di OBS.
 
 Tersedia dua route utama:
-- `http://localhost:3000/overlay/chat`
-- `http://localhost:3000/overlay/alert`
+- `http://localhost:5174/overlay/chat`
+- `http://localhost:5174/overlay/alert`
 
 ### 5. Aplikasi Desktop (Electron + React)
 ```bash
@@ -101,11 +118,11 @@ npm run dev   # menjalankan Vite renderer + Electron
 Aplikasi akan terbuka otomatis. Dashboard menampilkan ringkasan metrik dan sidebar navigasi ke Chat, Produk, Overlay, Analitik, dan Settings.
 
 ## Integrasi Overlay dengan OBS
-1. Pastikan overlay server aktif (`npm run dev -- --port 3000`).
+1. Pastikan overlay server aktif (`npm run dev -- --port 5174`).
 2. Buka OBS Studio lalu pilih scene yang ingin ditambah overlay.
 3. Klik tombol `+` pada panel **Sources**, pilih **Browser Source**, tekan **OK**.
-4. Isi kolom URL dengan `http://localhost:3000/overlay/chat`, sesuaikan lebar/tinggi (mis. 400x600), lalu klik **OK**.
-5. Ulangi langkah yang sama untuk menambahkan alert dengan URL `http://localhost:3000/overlay/alert`.
+4. Isi kolom URL dengan `http://localhost:5174/overlay/chat`, sesuaikan lebar/tinggi (mis. 400x600), lalu klik **OK**.
+5. Ulangi langkah yang sama untuk menambahkan alert dengan URL `http://localhost:5174/overlay/alert`.
 6. Atur urutan layer sumber agar overlay berada di atas feed video.
 
 ## Contoh Alur Penggunaan
@@ -126,7 +143,7 @@ Aplikasi akan terbuka otomatis. Dashboard menampilkan ringkasan metrik dan sideb
 | Gateway | `PORT` | `3000` | Port HTTP & WebSocket |
 | Gateway | `REDIS_URL` | `redis://redis:6379/0` | Pub/Sub channel Redis |
 | Gateway | `API_URL` | `http://api:8000` | Endpoint API internal (opsional) |
-| Overlay | `PORT` (via Vite) | `5173` | Port dev server (override dengan `--port`) |
+| Overlay | `PORT` (via Vite) | `5174` | Port dev server (override dengan `--port`) |
 
 ## Tips Pengembangan
 - Gunakan `docker compose down -v` untuk membersihkan volume database/Redis saat ingin reset data.
