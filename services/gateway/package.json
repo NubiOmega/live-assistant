@@ -1,0 +1,19 @@
+{
+  "name": "live-assistant-gateway",
+  "version": "0.1.0",
+  "description": "WebSocket gateway bridging Redis pub/sub events to connected clients.",
+  "main": "src/index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "ioredis": "^5.4.1",
+    "ws": "^8.17.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.3"
+  }
+}
