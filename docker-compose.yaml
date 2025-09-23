@@ -1,0 +1,91 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16
+    container_name: live-assistant-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: live_assistant
+      POSTGRES_USER: live_assistant
+      POSTGRES_PASSWORD: live_assistant
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - internal_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U live_assistant"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7
+    container_name: live-assistant-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - internal_net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ./services/api
+      dockerfile: Dockerfile
+    container_name: live-assistant-api
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://live_assistant:live_assistant@db:5432/live_assistant
+      REDIS_URL: redis://redis:6379/0
+      HOST: 0.0.0.0
+      PORT: 8000
+    volumes:
+      - ./services/api:/app
+    ports:
+      - "8000:8000"
+    networks:
+      - internal_net
+
+  gateway:
+    build:
+      context: ./services/gateway
+      dockerfile: Dockerfile
+    container_name: live-assistant-gateway
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_started
+    environment:
+      API_URL: http://api:8000
+      REDIS_URL: redis://redis:6379/0
+      PORT: 3000
+    volumes:
+      - ./services/gateway:/app
+    ports:
+      - "3000:3000"
+    networks:
+      - internal_net
+
+volumes:
+  db_data:
+  redis_data:
+
+networks:
+  internal_net:
+    driver: bridge
+    internal: true
