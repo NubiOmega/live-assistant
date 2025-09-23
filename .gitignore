@@ -1,0 +1,78 @@
+# ===================================
+# Node.js / React / Electron
+# ===================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.tgz
+
+# Build / Dist / Coverage
+dist/
+build/
+coverage/
+.cache/
+.out/
+out/
+*.spec
+
+# React (Vite/Next)
+apps/overlay/.next/
+apps/overlay/.vite/
+apps/overlay/.cache/
+apps/overlay/dist/
+
+# Electron (Desktop app)
+apps/desktop/out/
+apps/desktop/dist/
+apps/desktop/release/
+apps/desktop/.webpack/
+
+# ===================================
+# Python / FastAPI API
+# ===================================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+*.egg-info/
+*.egg
+*.log
+
+# Virtual Environments
+.venv/
+env/
+venv/
+ENV/
+.env
+.env.*
+
+# Alembic migrations cache
+services/api/alembic/versions/*.pyc
+services/api/alembic/__pycache__/
+
+# ===================================
+# Docker
+# ===================================
+*.pid
+*.seed
+*.pid.lock
+docker-compose.override.yml
+.docker/
+
+# ===================================
+# IDE / Editor
+# ===================================
+.vscode/
+.idea/
+*.iml
+*.swp
+*.swo
+
+# OS generated
+.DS_Store
+Thumbs.db
+desktop.ini
