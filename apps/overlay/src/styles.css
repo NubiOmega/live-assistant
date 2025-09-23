@@ -1,0 +1,143 @@
+:root {
+  color-scheme: dark;
+  font-family: "Inter", "Segoe UI", sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html, #root {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+}
+
+.overlay-root {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f8fafc;
+}
+
+.chat-overlay {
+  padding: 16px;
+}
+
+.chat-overlay__container {
+  width: 360px;
+  height: 540px;
+  overflow-y: hidden;
+  background: rgba(15, 23, 42, 0.65);
+  border-radius: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  backdrop-filter: blur(12px);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 30px 60px rgba(15, 23, 42, 0.45);
+}
+
+.chat-message {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(51, 65, 85, 0.55);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  animation: fade-in-up 0.45s ease;
+}
+
+.chat-message__user {
+  font-weight: 600;
+  color: #38bdf8;
+  font-size: 0.95rem;
+}
+
+.chat-message__text {
+  font-size: 0.9rem;
+  color: rgba(226, 232, 240, 0.85);
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.alert-overlay {
+  padding: 24px;
+}
+
+.alert-card {
+  width: 480px;
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.85), rgba(59, 130, 246, 0.85));
+  border-radius: 20px;
+  padding: 24px 32px;
+  border: 2px solid rgba(224, 242, 254, 0.5);
+  box-shadow: 0 40px 80px rgba(14, 116, 144, 0.45);
+  transition: transform 0.4s ease, opacity 0.4s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.alert-card--hidden {
+  opacity: 0;
+  transform: translateY(24px);
+}
+
+.alert-card--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.alert-card__header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.alert-card__user {
+  color: #f8fafc;
+}
+
+.alert-card__gift {
+  color: rgba(15, 23, 42, 0.9);
+}
+
+.alert-card__body {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: rgba(15, 23, 42, 0.9);
+}
+
+.alert-card__message {
+  font-size: 1rem;
+  color: rgba(241, 245, 249, 0.95);
+}
+
+.alert-card__amount {
+  font-size: 2.2rem;
+  color: #0f172a;
+}
+
+.alert-card__value {
+  font-size: 1.2rem;
+  color: rgba(15, 23, 42, 0.8);
+}
