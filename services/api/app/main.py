@@ -5,10 +5,17 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from . import auth, db
 from .config import settings
-from .schemas import (HealthResponse, TokenResponse, UserLoginRequest,
-                      UserRegisterRequest)
+from .routers import products
+from .schemas import (
+    HealthResponse,
+    TokenResponse,
+    UserLoginRequest,
+    UserRegisterRequest,
+)
 
 app = FastAPI(title=settings.app_name)
+
+app.include_router(products.router, prefix="/products", tags=["products"])
 
 
 @app.on_event("startup")

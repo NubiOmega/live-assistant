@@ -1,13 +1,12 @@
 from __future__ import annotations
 
 from datetime import datetime
-from decimal import Decimal
 from typing import Any, Dict, List, Optional
 
-from sqlalchemy import JSON, DateTime, ForeignKey, Integer, Numeric, String, func
+from sqlalchemy import JSON, DateTime, ForeignKey, Integer, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from .db import Base
+from .base import Base
 
 
 class User(Base):
@@ -20,27 +19,12 @@ class User(Base):
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
 
-    products: Mapped[List[Product]] = relationship(
-        back_populates="user", cascade="all, delete-orphan"
+    products: Mapped[List["Product"]] = relationship(
+        "Product", back_populates="user", cascade="all, delete-orphan"
     )
-    streams: Mapped[List[Stream]] = relationship(
-        back_populates="user", cascade="all, delete-orphan"
+    streams: Mapped[List["Stream"]] = relationship(
+        "Stream", back_populates="user", cascade="all, delete-orphan"
     )
-
-
-class Product(Base):
-    __tablename__ = "products"
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    title: Mapped[str] = mapped_column(String(255), nullable=False)
-    price: Mapped[Decimal] = mapped_column(Numeric(12, 2), nullable=False, default=Decimal("0.00"))
-    url: Mapped[Optional[str]] = mapped_column(String(2048), nullable=True)
-    image: Mapped[Optional[str]] = mapped_column(String(2048), nullable=True)
-    tags: Mapped[Optional[List[str]]] = mapped_column(JSON, nullable=True)
-    stock_info: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSON, nullable=True)
-
-    user: Mapped[User] = relationship(back_populates="products")
 
 
 class Stream(Base):
@@ -54,8 +38,8 @@ class Stream(Base):
     title: Mapped[str] = mapped_column(String(255), nullable=False)
 
     user: Mapped[User] = relationship(back_populates="streams")
-    events: Mapped[List[Event]] = relationship(
-        back_populates="stream", cascade="all, delete-orphan"
+    events: Mapped[List["Event"]] = relationship(
+        "Event", back_populates="stream", cascade="all, delete-orphan"
     )
 
 
@@ -71,3 +55,8 @@ class Event(Base):
     )
 
     stream: Mapped[Stream] = relationship(back_populates="events")
+
+
+from .product import Product  # noqa: E402,F401
+
+__all__ = ["Base", "Product", "User", "Stream", "Event"]
