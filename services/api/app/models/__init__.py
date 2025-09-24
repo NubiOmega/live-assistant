@@ -25,6 +25,9 @@ class User(Base):
     streams: Mapped[List["Stream"]] = relationship(
         "Stream", back_populates="user", cascade="all, delete-orphan"
     )
+    rules: Mapped[List["Rule"]] = relationship(
+        "Rule", back_populates="user", cascade="all, delete-orphan"
+    )
 
 
 class Stream(Base):
@@ -45,5 +48,6 @@ class Stream(Base):
 
 from .product import Product  # noqa: E402,F401
 from .event import Event  # noqa: E402,F401
+from .rule import Rule  # noqa: E402,F401
 
-__all__ = ["Base", "Product", "User", "Stream", "Event"]
+__all__ = ["Base", "Product", "User", "Stream", "Event", "Rule"]
