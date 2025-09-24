@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react';
 
+import ChatPanel from './Chat.jsx';
 import ProductsPanel from './Products.jsx';
+import SettingsPanel from './Settings.jsx';
 
 const menuItems = [
   {
@@ -42,18 +44,55 @@ const summaryCards = [
   { title: 'Produk Terjual', value: '48', hint: 'Hari ini' }
 ];
 
+const defaultSettings = {
+  chatKeywords: ['harga', 'link', 'stok']
+};
+
 export default function App() {
   const [activeKey, setActiveKey] = useState(menuItems[0].key);
+  const [settings, setSettings] = useState(defaultSettings);
 
   const activeItem = useMemo(
     () => menuItems.find((item) => item.key === activeKey) ?? menuItems[0],
     [activeKey]
   );
 
+  const handleChatKeywordsChange = (nextKeywords = []) => {
+    const seen = new Set();
+    const normalized = [];
+
+    nextKeywords.forEach((keyword) => {
+      const value = keyword.trim();
+      if (!value) {
+        return;
+      }
+      const key = value.toLowerCase();
+      if (seen.has(key)) {
+        return;
+      }
+      seen.add(key);
+      normalized.push(value);
+    });
+
+    setSettings((prev) => ({
+      ...prev,
+      chatKeywords: normalized.length > 0 ? normalized : defaultSettings.chatKeywords
+    }));
+  };
+
   const renderPanelContent = () => {
     switch (activeKey) {
+      case 'chat':
+        return <ChatPanel keywords={settings.chatKeywords} />;
       case 'produk':
         return <ProductsPanel />;
+      case 'settings':
+        return (
+          <SettingsPanel
+            chatKeywords={settings.chatKeywords}
+            onChangeChatKeywords={handleChatKeywordsChange}
+          />
+        );
       default:
         return (
           <div className="panel__placeholder">
@@ -112,4 +151,3 @@ export default function App() {
     </div>
   );
 }
-
