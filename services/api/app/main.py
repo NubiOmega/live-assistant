@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from . import auth, db
 from .config import settings
-from .routers import products
+from .routers import events, products
 from .schemas import (
     HealthResponse,
     TokenResponse,
@@ -25,6 +25,7 @@ app.add_middleware(
 )
 
 app.include_router(products.router, prefix="/products", tags=["products"])
+app.include_router(events.router, tags=["events"])
 
 
 @app.on_event("startup")
@@ -65,4 +66,3 @@ async def login_user(
 
     token = auth.create_access_token(payload.username)
     return TokenResponse(access_token=token)
-

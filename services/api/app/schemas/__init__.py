@@ -21,6 +21,7 @@ class TokenResponse(BaseModel):
 
 
 from .product import ProductIn, ProductOut  # noqa: E402,F401
+from .event import EventIngestRequest  # noqa: E402,F401
 
 __all__ = [
     "HealthResponse",
@@ -29,4 +30,5 @@ __all__ = [
     "TokenResponse",
     "ProductIn",
     "ProductOut",
+    "EventIngestRequest",
 ]
